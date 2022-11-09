@@ -56,5 +56,7 @@ def process_csv(csv_path):
             redis_client.hset(doc_key, 'processed_rows', current_row_counter)
             current_row_counter += 1
 
+    if not redis_client.sismember('documents:process', file_md5):
+        redis_client.lpush('documents:process', file_md5)
 
 process_csv('file.csv')

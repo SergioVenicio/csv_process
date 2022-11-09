@@ -1,5 +1,6 @@
 import csv
 
+from redis_cli import redis_client
 import cassandra_config
 
 from models import Row, Cell
@@ -12,8 +13,7 @@ def sort_by_position(row):
 cassandra_config.init()
 
 
-file_md5 = '4cbfb1a3141c66c60bef9e495183bf44'
-def write_file(delimiter=','):
+def write_file(file_md5, delimiter=','):
     rows = Row.objects.filter(document_md5=file_md5).allow_filtering()
     rows = sorted(rows, key=sort_by_position)
     print(len(rows))
@@ -53,4 +53,10 @@ def write_file(delimiter=','):
 
 
 
-write_file()
+while(True):
+    file_md5 = redis_client.lpop('documents:process')
+    if file_md5 is None:
+        break
+    
+    print(file_md5)
+    write_file(file_md5)
