@@ -1,0 +1,57 @@
+version: "3.3"
+
+services:
+  redis-1:
+    image: redis:latest
+    restart: always
+    hostname: redis-1
+    container_name: redis-1
+    networks:
+      redis-cluster:
+        ipv4_address: "10.0.0.11"
+    ports:
+      - '6379:6379'
+    command: redis-server /usr/local/etc/redis/redis.conf --requirepass password
+    volumes: 
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+      - redis-1-data:/data
+  redis-2:
+    image: redis:latest
+    restart: always
+    hostname: redis-2
+    container_name: redis-2
+    networks:
+      redis-cluster:
+        ipv4_address: "10.0.0.12"
+    ports:
+      - '6380:6379'
+    command: redis-server /usr/local/etc/redis/redis.conf --requirepass password
+    volumes: 
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+      - redis-2-data:/data
+  redis-3:
+    image: redis:latest
+    restart: always
+    hostname: redis-3
+    container_name: redis-3
+    networks:
+      redis-cluster:
+        ipv4_address: "10.0.0.13"
+    ports:
+      - '6381:6379'
+    command: redis-server /usr/local/etc/redis/redis.conf --requirepass password
+    volumes: 
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+      - redis-3-data:/data
+
+networks:
+  redis-cluster:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.0.0/24
+
+volumes:
+  redis-1-data:
+  redis-2-data:
+  redis-3-data:

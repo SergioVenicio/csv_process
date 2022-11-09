@@ -1,9 +1,7 @@
-import redis
+from rediscluster import RedisCluster
 
-redis_client = redis.Redis(
-    host='127.0.0.1',
-    port=6379,
-    db=0,
+redis_client = RedisCluster.from_url(
+    url='redis://:password@127.0.0.1:6379/0',
     password='password',
     decode_responses=True
 )
